@@ -386,6 +386,7 @@ class AutoEncryptionOpts {
    bypassQueryAnalysis: Optional<Boolean>; // Default false.
    keyExpirationMS: Optional<Uint64>; // Default 60000. 0 means "never expire".
    credentialProviders: Optional<CredentialProviders>;
+   kmsConnectCallback: Optional<Callback>; // Optional to implement.
 }
 ```
 
@@ -518,6 +519,29 @@ const client = new MongoClient(process.env.MONGODB_URI, {
   }
 }
 ```
+
+#### kmsConnectCallback
+
+The `kmsConnectCallback` property may be specified on [ClientEncryptionOpts](#ClientEncryptionOpts) or
+[AutoEncryptionOpts](#AutoEncryptionOpts).
+
+When provided, the callback is invoked when establishing a connection to a KMS host, receiving the hostname and port as
+arguments. It MUST return a socket-like object connected to the target host. The driver then wraps the returned socket
+with TLS (using the KMS provider's configured [TLS options](#kms-provider-tls-options)). TLS is negotiated end-to-end
+with the KMS host; SNI and certificate/hostname verification MUST target the KMS host, not the address the callback
+actually connected to (e.g. an HTTP proxy). Drivers supporting CSOT MUST pass remaining `timeoutMS`. A network error
+reported by the callback MUST be treated as transient. Drivers that retry KMS requests on transient network errors MUST
+re-invoke the callback, and drivers without KMS retry propagate the failure. Drivers MAY treat all callback errors as
+transient if network errors cannot reliably be distinguished.
+
+This is intended to enable use cases such as routing KMS requests through an HTTP proxy via HTTP CONNECT. The callback
+type is intentionally left unspecified so that drivers may use the type that best fits their language (e.g., a function,
+a callable object).
+
+Drivers supporting CSOT must pass a time limit if set.
+
+Drivers are required to support an HTTP proxy but MAY omit `kmsConnectCallback` if they provide an alternative mechanism
+for proxy support.
 
 #### kmsProviders
 
@@ -1101,6 +1125,7 @@ interface ClientEncryptionOpts {
    credentialProviders: CredentialProviders;
    tlsOptions?: KMSProvidersTLSOptions; // Maps KMS provider to TLS options.
    keyExpirationMS: Optional<Uint64>; // Default 60000. 0 means "never expire".
+   kmsConnectCallback?: Callback; // Optional to implement.
 };
 
 interface KMSProvidersTLSOptions {
@@ -1348,9 +1373,9 @@ insert or query. Drivers MUST document the following behavior:
 
 > To insert or query with an "Indexed", "Range", or "String" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
-> must be false. The "substringPreview" query type is in preview and should be used for experimental workloads only.
-> This feature is unstable and its security is not guaranteed until released as Generally Available (GA). The GA version
-> of this feature may not be backwards compatible with the preview version.
+> must be false. The "prefixPreview", "suffixPreview", and "substringPreview" query types are in preview and should be
+> used for experimental workloads only. This feature is unstable and its security is not guaranteed until released as
+> Generally Available (GA). The GA version of this feature may not be backwards compatible with the preview version.
 
 #### contentionFactor
 
@@ -1363,11 +1388,11 @@ One of the strings:
 
 - "equality"
 - "range"
-- "prefix"
+- "prefix" / "prefixPreview"
     - Used for the `$encStrStartsWith` operator.
-- "suffix"
+- "suffix" / "suffixPreview"
     - Used for the `$encStrEndsWith` operator.
-- "substringPreview"
+- "substring" / "substringPreview"
     - Used for the `$encStrContains` operator.
 
 queryType only applies when algorithm is "Indexed", "Range", or "String". libmongocrypt returns an error if queryType is
@@ -1774,13 +1799,6 @@ encrypted data (e.g. ping). See the appendix section:
 [libmongocrypt: Auto Encryption Allow-List](#libmongocrypt-auto-encryption-allow-list).
 
 An encrypted MongoClient MUST attempt to auto decrypt the results of all commands.
-
-Drivers MUST raise an error when attempting to auto encrypt a command if the maxWireVersion is less than 8. The error
-message MUST contain "Auto-encryption requires a minimum MongoDB version of 4.2".
-
-Note, all client side features (including all of `ClientEncryption`) are only supported against 4.2 or higher servers.
-However, errors are only raised for automatic encryption/decryption against older servers. See
-[Why is a 4.2 server required?](#why-is-a-42-server-required)
 
 ## Interaction with Command Monitoring
 
@@ -2522,6 +2540,18 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2026-06-25: Add `kmsConnectCallback` to `AutoEncryptionOpts` and `ClientEncryptionOpts` to support HTTP proxy use
+    cases.
+
+- 2026-06-22: Add stable support for substring queries
+
+- 2026-06-17: Remove pre-4.2 version references.
+
+- 2026-06-17: Restore `prefixPreview` and `suffixPreview` as experimental.
+
+- 2026-06-16: Update tests in response to server-side validation of payloads
+    ([SERVER-91887](https://jira.mongodb.org/browse/SERVER-91887))
 
 - 2026-05-29: Add stable support for prefix and suffix queries
 
