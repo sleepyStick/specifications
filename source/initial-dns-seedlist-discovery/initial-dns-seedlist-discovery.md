@@ -76,8 +76,7 @@ use:
 
 - If the value does not begin with a `.`, a `.` MUST be automatically prepended. For example,
     `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
-- The value MUST contain at least two dot-separated labels (i.e. the portion after the leading `.` must itself contain a
-    `.`). For example, `srvAllowedHostsSuffix=.net` MUST raise an error.
+- The value MUST NOT be a public suffix, per the algorithm in (../public-suffix-list/public-suffix-list.md)
 - The value MUST be normalized to lowercase using ASCII case folding before comparison.
 
 If this option is not present, the `{domainname}` MUST be inferred from the `{hostname}` (as described in
@@ -307,7 +306,7 @@ In the future we could consider using the priority and weight fields of the SRV 
 
 ## ChangeLog
 
-- 2026-01-01: Add `srvAllowedHostsSuffix` MongoClient option.
+- 2026-08-24: Add `srvAllowedHostsSuffix` MongoClient option.
 
 - 2024-09-24: Removed requirement for URI to have three '.' separated parts; these SRVs have stricter parent domain
     matching requirements for security. Create terminology section. Remove usage of term `{TLD}`. The `{hostname}` now

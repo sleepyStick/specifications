@@ -185,7 +185,7 @@ changes.
 
 ## Changelog
 
-- 2026-06-08: Add `srvAllowedHostsSuffix` option.
+- 2026-08-24: Add `srvAllowedHostsSuffix` option.
 
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 
