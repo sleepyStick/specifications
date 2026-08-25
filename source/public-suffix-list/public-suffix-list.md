@@ -87,7 +87,11 @@ fail to match rules that should match.
 ### Determining the public suffix
 
 To determine the public suffix of a domain, a driver using the vendored file MUST follow the
-[algorithm published by the publicsuffix folks](https://github.com/publicsuffix/list/wiki/Format#algorithm):
+[algorithm published by the publicsuffix folks](https://github.com/publicsuffix/list/wiki/Format#algorithm), pasted
+below for easy reference.
+
+Before applying this algorithm, the domain MUST be canonicalized in the normal way for hostnames — lower-case and
+Punycode — and MUST NOT contain empty labels, including a leading or trailing `.`.
 
 1. Compare the domain's labels against each rule's labels from right to left, treating `*` as matching any single label.
     Collect every rule that matches.
@@ -95,6 +99,8 @@ To determine the public suffix of a domain, a driver using the vendored file MUS
 3. If any matching rule is an exception rule, it prevails. Otherwise, the matching rule with the most labels prevails.
 4. If the prevailing rule is an exception rule, remove its leftmost label.
 5. The public suffix is the set of the domain's labels matched by the prevailing rule.
+
+A domain is itself a public suffix if and only if the public suffix determined by this algorithm is equal to the domain.
 
 For example, given the rules `ck`, `*.ck`, and `!www.ck`: the public suffix of `a.b.ck` is `b.ck`, because `*.ck`
 prevails; but the public suffix of `www.ck` is `ck`, because the exception rule `!www.ck` prevails and has its leftmost
