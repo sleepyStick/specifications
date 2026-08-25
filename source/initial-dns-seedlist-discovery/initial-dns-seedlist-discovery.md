@@ -71,13 +71,12 @@ Only `{domainname}` is used during SRV record verification and `{subdomain}` is 
 This option is used to validate hosts. If present, its value MUST be treated as the `{domainname}` for
 [DNS validation](#querying-dns) and
 [SRV polling](../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md). For example,
-`srvAllowedHostsSuffix=.mydomain.net`. Drivers MUST apply the following normalization and validation to the value before
-use:
-
-- If the value does not begin with a `.`, a `.` MUST be automatically prepended. For example,
-    `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
-- The value MUST NOT be a public suffix, per the algorithm in (../public-suffix-list/public-suffix-list.md)
-- The value MUST be normalized to lowercase using ASCII case folding before comparison.
+`srvAllowedHostsSuffix=.mydomain.net`. Drivers MUST apply the following normalization and validation to the value, in this order:
+1. Any trailing `.` MUST be stripped. For example, `srvAllowedHostsSuffix=.mydomain.net.` is treated as `.mydomain.net`.
+2. The value MUST be converted to its A-label (Punycode) form, so that it is comparable against the A-label hostnames returned by DNS.
+3. The value MUST be normalized to lowercase using ASCII case folding.
+4. The resulting value, with any leading `.` removed, MUST NOT be a public suffix, per the algorithm in [Public Suffix List](../public-suffix-list/public-suffix-list.md).
+5. If the value does not begin with a `.`, a `.` MUST be prepended. For example, `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
 
 If this option is not present, the `{domainname}` MUST be inferred from the `{hostname}` (as described in
 [Connection String Format](#connection-string-format)). This option MUST only be configurable at the level of a
