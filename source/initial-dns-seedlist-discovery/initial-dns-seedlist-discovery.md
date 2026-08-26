@@ -74,10 +74,13 @@ This option is used to validate hosts. If present, its value MUST be treated as 
 `srvAllowedHostsSuffix=.mydomain.net`. Drivers MUST apply the following normalization and validation to the value, in
 this order:
 
-1. Any leading or trailing `.` MUST be stripped. For example, `srvAllowedHostsSuffix=.mydomain.net.` is treated as `mydomain.net`.
-2. The value MUST be converted to its A-label (Punycode) form, so that it is comparable against the A-label hostnames returned by DNS.
+1. Any leading or trailing `.` MUST be stripped. For example, `srvAllowedHostsSuffix=.mydomain.net.` is treated as
+    `mydomain.net`.
+2. The value MUST be converted to its A-label (Punycode) form, so that it is comparable against the A-label hostnames
+    returned by DNS.
 3. The value MUST be normalized to lowercase using ASCII case folding.
-4. The resulting value MUST NOT be a public suffix, per the algorithm in [Public Suffix List](../public-suffix-list/public-suffix-list.md).
+4. The resulting value MUST NOT be a public suffix, per the algorithm in
+    [Public Suffix List](../public-suffix-list/public-suffix-list.md).
 5. A `.` MUST be prepended. For example, `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
 
 If this option is not present, the `{domainname}` MUST be inferred from the `{hostname}` (as described in
@@ -340,6 +343,9 @@ There are no backwards compatibility concerns.
 In the future we could consider using the priority and weight fields of the SRV records.
 
 ## ChangeLog
+
+- 2026-08-24: Specify that host names returned through SRV records are normalized -- trailing dot stripped, ASCII
+    lowercase -- before validation.
 
 - 2026-08-24: Add `srvAllowedHostsSuffix` MongoClient option.
 
