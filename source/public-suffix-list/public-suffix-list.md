@@ -187,4 +187,6 @@ notice does not apply to the rest of this repository.
 
 ## Changelog
 
+- 2026-08-28: Add a prose test covering internationalized (Punycode vs. Unicode) rules.
+
 - 2026-08-11: Vendor the Public Suffix List and add a script to sync it.

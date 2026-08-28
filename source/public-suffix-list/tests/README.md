@@ -36,6 +36,12 @@ This test utilizes the rule `!www.ck` in the PSL, which overrides the `*.ck` rul
 When no rule matches, the prevailing rule is `*` and the rightmost label alone is the public suffix. Assert that
 `is_public_suffix("nosuchtld") -> true` and `is_public_suffix("foo.nosuchtld") -> false`.
 
+### 6. An internationalized rule
+
+This test utilizes the rules `рф` and `公司.cn` in the PSL, which are stored as Unicode while the hostnames being compared
+are Punycode-encoded. Assert that `is_public_suffix("xn--p1ai") -> true`,
+`is_public_suffix("example.xn--p1ai") -> false`, and `is_public_suffix("xn--55qx5d.cn") -> true`.
+
 ## Connection String Tests
 
 The `srvAllowedHostsSuffix-psl-*` tests in the
