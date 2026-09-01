@@ -75,7 +75,7 @@ This option is used to validate hosts. If present, its value MUST be treated as 
 this order:
 
 1. Any leading or trailing `.` MUST be stripped. For example, `srvAllowedHostsSuffix=.mydomain.net.` is treated as
-    `mydomain.net`.
+    `mydomain.net`. If the resulting stripped value is empty, an error MUST be raised.
 2. The value MUST be converted to its A-label (Punycode) form, so that it is comparable against the A-label hostnames
     returned by DNS.
 3. The value MUST be normalized to lowercase using ASCII case folding.
@@ -344,7 +344,7 @@ In the future we could consider using the priority and weight fields of the SRV 
 
 ## ChangeLog
 
-- 2026-08-24: Specify that host names returned through SRV records are normalized -- trailing dot stripped, ASCII
+- 2026-08-31: Specify that host names returned through SRV records are normalized -- trailing dot stripped, ASCII
     lowercase -- before validation.
 
 - 2026-08-24: Add `srvAllowedHostsSuffix` MongoClient option.

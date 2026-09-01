@@ -185,7 +185,7 @@ changes.
 
 ## Changelog
 
-- 2026-08-24: Add `srvAllowedHostsSuffix` option.
+- 2026-08-31: Add `srvAllowedHostsSuffix` option.
 
 - 2026-06-17: Remove pre-4.2 version references.
 
