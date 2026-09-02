@@ -79,7 +79,7 @@ this order:
 2. The value MUST be converted to its A-label (Punycode) form, so that it is comparable against the A-label hostnames
     returned by DNS.
 3. The value MUST be normalized to lowercase using ASCII case folding.
-4. The resulting value MUST NOT be a public suffix, per the algorithm in
+4. The resulting value SHOULD NOT be a public suffix, per the algorithm in
     [Public Suffix List](../public-suffix-list/public-suffix-list.md).
 5. A `.` MUST be prepended. For example, `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
 
