@@ -352,7 +352,8 @@ In the future we could consider using the priority and weight fields of the SRV 
 
 ## ChangeLog
 
-- 2026-08-31: Specify that host names returned through SRV records are normalized -- trailing dot stripped, ASCII
+- 2026-08-31: Specify that host names returned through SRV records, and the `{domainname}` they are validated against,
+    are both normalized -- trailing dot stripped, converted to A-label form, ASCII lowercased -- before validation.
     lowercase -- before validation.
 
 - 2026-08-24: Add `srvAllowedHostsSuffix` MongoClient option.
