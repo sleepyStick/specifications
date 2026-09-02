@@ -74,8 +74,13 @@ This option is used to validate hosts. If present, its value MUST be treated as 
 `srvAllowedHostsSuffix=.mydomain.net`. Drivers MUST apply the following normalization and validation to the value, in
 this order:
 
-4. The resulting value MUST contain at least two `.` separated labels. For example,
-    `srvAllowedHostsSuffix=net` MUST raise an error.
+1. Any leading or trailing `.` MUST be stripped. For example, `srvAllowedHostsSuffix=.mydomain.net.` is treated as
+    `mydomain.net`. If the resulting stripped value is empty, an error MUST be raised.
+2. The value MUST be converted to its A-label (Punycode) form, so that it is comparable against the A-label hostnames
+    returned by DNS.
+3. The value MUST be normalized to lowercase using ASCII case folding.
+4. The resulting value MUST contain at least two `.` separated labels. For example, `srvAllowedHostsSuffix=net` MUST
+    raise an error.
 5. Drivers SHOULD raise an error if the resulting value is a public suffix, per the algorithm in
     [Public Suffix List](../public-suffix-list/public-suffix-list.md).
 6. A `.` MUST be prepended. For example, `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
