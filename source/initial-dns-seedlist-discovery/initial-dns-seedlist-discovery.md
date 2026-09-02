@@ -148,10 +148,15 @@ If the DNS result returns no SRV records, or no records at all, or a DNS error h
 indicating that the URI could not be used to find hostnames. The error SHALL include the reason why they could not be
 found.
 
-Before validating returned hostnames, drivers MUST normalize them as follows:
+Before validating returned hostnames, drivers MUST normalize them as follows, in this order:
 
-- Trailing dots MUST be stripped (e.g. `host.example.com.` becomes `host.example.com`).
-- Hostnames MUST be normalized to lowercase using ASCII case folding.
+1. Any trailing `.` MUST be stripped. For example, `host.mydomain.net.` becomes `host.mydomain.net`.
+2. The hostname MUST be converted to its A-label (Punycode) form.
+3. The hostname MUST be normalized to lowercase using ASCII case folding.
+
+The `{domainname}` that returned hostnames are validated against MUST be normalized the same way, so that both sides of
+the comparison are in the same form. When `{domainname}` comes from `srvAllowedHostsSuffix`, this is already covered by
+the normalization in [srvAllowedHostsSuffix](#srvallowedhostssuffix).
 
 A driver MUST verify that the host names returned through SRV records share the original SRV's `{domainname}`. In
 addition, when `srvAllowedHostsSuffix` is not configured and the SRV record hostname has fewer than three `.` separated

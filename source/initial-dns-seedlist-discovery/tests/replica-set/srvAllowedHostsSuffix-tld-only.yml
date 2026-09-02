@@ -1,4 +1,4 @@
-# srvAllowedHostsSuffix MUST NOT be a public suffix. "cc" is an ordinary rule in the
+# srvAllowedHostsSuffix SHOULD NOT be a public suffix. "cc" is an ordinary rule in the
 # Public Suffix List, so ".cc" is a public suffix and MUST raise an error.
 # Note: .cc is used (rather than an unrelated public suffix) because the DNS records
 # return hosts ending in .cc, so the host suffix check passes and the public suffix
