@@ -191,7 +191,7 @@ notice does not apply to the rest of this repository.
 
 ## Changelog
 
-- 2026-08-31: Clarify that markers shouldn't be converted to Punycode and add a prose test covering internationalized
+- 2026-09-03: Clarify that markers shouldn't be converted to Punycode and add a prose test covering internationalized
     (Punycode vs. Unicode) rules.
 
 - 2026-08-11: Vendor the Public Suffix List and add a script to sync it.

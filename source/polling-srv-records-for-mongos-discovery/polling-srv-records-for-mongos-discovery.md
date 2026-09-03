@@ -170,7 +170,7 @@ No future work is expected.
 
 ## Changelog
 
-- 2026-08-31: Account for the `srvAllowedHostsSuffix` MongoClient option when verifying returned host names.
+- 2026-09-03: Account for the `srvAllowedHostsSuffix` MongoClient option when verifying returned host names.
 
 - 2024-08-22: Migrated from reStructuredText to Markdown.
 
