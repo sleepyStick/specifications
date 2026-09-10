@@ -48,6 +48,54 @@ For this test, run each of the following cases:
 - the SRV `mongodb+srv://mongo.local` resolving to `test_1.my_hostmongo.local`
 - the SRV `mongodb+srv://blogs.mongodb.com` resolving to `cluster.testmongodb.com`
 
+### 5. srvHostValidator accepts a host the default verification would reject
+
+When `srvHostValidator` is configured, it replaces the default verification entirely, so a returned address the default
+check would reject MUST be accepted if the validator returns `true`.
+
+Configure a validator that returns `true` for every host name and assert that the SRV `mongodb+srv://blogs.mongodb.com`
+resolving to `blogs.evil.com` produces a seedlist containing `blogs.evil.com`.
+
+### 6. Reject a host the default verification would accept
+
+Configure a validator that returns `false` for every host name and assert that the SRV `mongodb+srv://blogs.mongodb.com`
+resolving to `cluster.mongodb.com` throws a runtime error, even though the returned address shares the SRV's domain
+name.
+
+### 7. The validator receives the normalized host name
+
+The returned address is normalized before verification, so the validator MUST be passed the normalized form rather than
+the address exactly as returned by DNS.
+
+Configure a validator that records the host names it is passed and returns `true`, then run the SRV
+`mongodb+srv://blogs.mongodb.com` resolving to `CLUSTER.MONGODB.COM.` and assert that the validator was passed
+`cluster.mongodb.com`.
+
+### 8. Wrap an error raised by the validator
+
+When the validator raises an error during initial seedlist resolution, the driver MUST catch it and re-raise it wrapped
+in a driver error rather than letting it propagate unchanged.
+
+Configure a validator that raises an error and assert that the SRV `mongodb+srv://blogs.mongodb.com` resolving to
+`cluster.mongodb.com` throws a runtime error which retains the error raised by the validator.
+
+### 9. Throw when both `srvAllowedHostsSuffix` and `srvHostValidator` are configured
+
+The two options are mutually exclusive.
+
+Assert that configuring a MongoClient with both `srvAllowedHostsSuffix=.mongodb.com` and any `srvHostValidator` throws a
+runtime error.
+
+### 10. Accept a mixed case returned address with `srvAllowedHostsSuffix`
+
+Returned addresses are normalized before verification, so the suffix comparison MUST be unaffected by the case in which
+DNS returns them. This case is not covered by the connection string tests (and cannot due to infrastructure
+limitations), which rely on DNS records whose targets are already lowercase.
+
+Configure a MongoClient with `srvAllowedHostsSuffix=.mongodb.com` and assert that the SRV
+`mongodb+srv://blogs.mongodb.com` resolving to `CLUSTER.MONGODB.COM.` produces a seedlist containing
+`cluster.mongodb.com`.
+
 ## Test Setup
 
 The tests in the `replica-set` directory MUST be executed against a three-node replica set on localhost ports 27017,
