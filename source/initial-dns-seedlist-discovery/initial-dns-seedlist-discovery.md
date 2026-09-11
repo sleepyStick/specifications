@@ -114,7 +114,7 @@ domain name validation can create vulnerabilities." should be clearly visible in
 #### srvHostValidator
 
 This option is an alternative to `srvAllowedHostsSuffix` that allows users to provide an optional synchronous callback
-for SRV host validation. If both `srvAllowedHostsSuffix` and `srvHostValidator` are present, an error MUST be raised.
+If both `srvAllowedHostsSuffix` and `srvHostValidator` are present, an error MUST be raised. Drivers MAY raise this error at any point between MongoClient construction and DNS resolution.
 The signature of `srvHostValidator` MUST take in a string representing the SRV resolved hostname after applying the
 normalization described in [Querying DNS](#querying-dns), and return a bool representing whether the given SRV hostname
 is valid or not. If `srvHostValidator` raises an error during initial seedlist resolution, the driver MUST catch that
