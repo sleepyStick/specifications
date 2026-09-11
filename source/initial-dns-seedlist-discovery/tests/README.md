@@ -64,7 +64,7 @@ name.
 
 ### 7. The validator receives the normalized host name
 
-The returned address is normalized before verification, so the validator MUST be passed the normalized form rather than
+The returned address is normalized before verification, so the validator must be passed the normalized form rather than
 the address exactly as returned by DNS.
 
 Configure a validator that records the host names it is passed and returns `true`, then run the SRV
@@ -73,7 +73,7 @@ Configure a validator that records the host names it is passed and returns `true
 
 ### 8. Wrap an error raised by the validator
 
-When the validator raises an error during initial seedlist resolution, the driver MUST catch it and re-raise it wrapped
+When the validator raises an error during initial seedlist resolution, the driver must catch it and re-raise it wrapped
 in a driver error rather than letting it propagate unchanged.
 
 Configure a validator that raises an error and assert that the SRV `mongodb+srv://blogs.mongodb.com` resolving to
@@ -88,13 +88,19 @@ runtime error.
 
 ### 10. Accept a mixed case returned address with `srvAllowedHostsSuffix`
 
-Returned addresses are normalized before verification, so the suffix comparison MUST be unaffected by the case in which
-DNS returns them. This case is not covered by the connection string tests (and cannot due to infrastructure
-limitations), which rely on DNS records whose targets are already lowercase.
+Returned addresses must be normalized before verification.
 
 Configure a MongoClient with `srvAllowedHostsSuffix=.mongodb.com` and assert that the SRV
 `mongodb+srv://blogs.mongodb.com` resolving to `CLUSTER.MONGODB.COM.` produces a seedlist containing
 `cluster.mongodb.com`.
+
+### 11. Throw when `srvHostValidator` is not callable
+
+Drivers whose language cannot express a non-callable value for `srvHostValidator` -- because the type is checked when
+the program is compiled -- MUST skip this test.
+
+Assert that configuring a MongoClient with a `srvHostValidator` that is not callable, such as the string
+`"notacallable"`, throws a runtime error.
 
 ## Test Setup
 
