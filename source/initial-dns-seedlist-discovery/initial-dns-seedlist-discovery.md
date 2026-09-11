@@ -194,6 +194,9 @@ Before validating returned hostnames, drivers MUST normalize them as follows, in
 2. The hostname MUST be converted to its A-label (Punycode) form.
 3. The hostname MUST be normalized to lowercase using ASCII case folding.
 
+Drivers MUST use the normalized hostnames, rather than the hostnames exactly as returned by DNS, to populate the
+seedlist.
+
 The `{domainname}` that returned hostnames are validated against MUST have the same three normalizations applied, so
 that neither trailing dots, case, nor Unicode/Punycode encoding can affect the comparison. When `{domainname}` comes
 from `srvAllowedHostsSuffix`, steps 1-3 of [srvAllowedHostsSuffix](#srvallowedhostssuffix) already apply them. The
@@ -206,8 +209,8 @@ options are configured:
     configured, the returned host name MUST share the original SRV's `{domainname}`. In addition, when the SRV record
     hostname has fewer than three `.` separated parts, the returned hostname MUST have at least one more domain level
     than the SRV record hostname.
-- When [`srvAllowedHostsSuffix`](#srvallowedhostssuffix) is configured, the returned host name MUST end in
-    `srvAllowedHostsSuffix` after normalization.
+- When [`srvAllowedHostsSuffix`](#srvallowedhostssuffix) is configured, the returned host name MUST end in `.` followed
+    by the `srvAllowedHostsSuffix` value after normalization.
 - When [`srvHostValidator`](#srvhostvalidator) is configured, the driver MUST pass each returned host name to the
     validator and MUST treat the value it returns as the complete verdict: a returned host name is valid if and only if
     the validator returns `true`. Drivers MUST NOT additionally apply the `{domainname}` check or the domain level

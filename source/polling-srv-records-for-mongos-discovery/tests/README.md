@@ -225,8 +225,13 @@ rescan, and that the final topology description contains the following hosts:
 #### 15. A validator that rejects or raises does not raise an error or stop polling
 
 Run this test twice: once with a validator that returns `false` for every host name, and once with a validator that
-raises an error for every host name. In both cases the driver MUST treat the returned host name as non-compliant, and
-MUST NOT raise an error to the application or stop rescanning.
+raises an error for every host name.
+
+The validator's behavior MUST be controlled by state external to the validator (e.g. a flag the validator reads) so that
+it can be changed later in the test without reconfiguring the MongoClient.
+
+In both cases the driver MUST treat the returned host name as non-compliant, and MUST NOT raise an error to the
+application or stop rescanning.
 
 Mock the addition of the following DNS record:
 
@@ -240,6 +245,8 @@ only the original hosts:
 - localhost.test.build.10gen.cc:27017
 - localhost.test.build.10gen.cc:27018
 
-Then reconfigure the validator to return `true` for every host name, wait until `2*rescanSRVIntervalMS`, and assert that
-rescanning was not stopped by the earlier failures: the final topology description MUST contain
-`localhost.test.build.10gen.cc:27019` in addition to the two original hosts.
+Then change that external state so the validator accepts every host name. Because the earlier rescans obtained no
+verified hosts, the driver has temporarily set *rescanSRVIntervalMS* to *heartbeatFrequencyMS*, so the next rescan
+occurs within `heartbeatFrequencyMS`. Wait until `2*heartbeatFrequencyMS` and assert that rescanning was not stopped by
+the earlier failures: the final topology description MUST contain `localhost.test.build.10gen.cc:27019` in addition to
+the two original hosts.
