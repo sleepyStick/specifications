@@ -50,11 +50,15 @@ For this test, run each of the following cases:
 
 ### 5. srvHostValidator accepts a host the default verification would reject
 
-When `srvHostValidator` is configured, it replaces the default verification entirely, so a returned address the default
-check would reject MUST be accepted if the validator returns `true`.
+When `srvHostValidator` is configured, it replaces the default verification entirely, so a returned address that the
+default verification check would reject must be accepted if the validator returns `true`.
 
-Configure a validator that returns `true` for every host name and assert that the SRV `mongodb+srv://blogs.mongodb.com`
-resolving to `blogs.evil.com` produces a seedlist containing `blogs.evil.com`.
+Configure a validator that returns `true` for every host name, then run each of the following cases:
+
+- the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com`, which does not share the SRV's domain name,
+    produces a seedlist containing `blogs.evil.com`
+- the SRV `mongodb+srv://mongo.local` resolving to `mongo.local`, which does not add a domain level to an SRV hostname
+    with fewer than three `.` separated parts, produces a seedlist containing `mongo.local`
 
 ### 6. Reject a host the default verification would accept
 
@@ -83,8 +87,8 @@ Configure a validator that raises an error and assert that the SRV `mongodb+srv:
 
 The two options are mutually exclusive.
 
-Assert that configuring a MongoClient with both `srvAllowedHostsSuffix=.mongodb.com` and any `srvHostValidator` throws a
-runtime error.
+Assert that configuring a MongoClient with both `srvAllowedHostsSuffix=.mongodb.com` and any `srvHostValidator` throws
+an error.
 
 ### 10. Accept a mixed case returned address with `srvAllowedHostsSuffix`
 
@@ -101,6 +105,22 @@ the program is compiled -- MUST skip this test.
 
 Assert that configuring a MongoClient with a `srvHostValidator` that is not callable, such as the string
 `"notacallable"`, throws a runtime error.
+
+### 12. Accept a reserved single label as `srvAllowedHostsSuffix`
+
+A single label is a public suffix under the Public Suffix List's `*` rule, but the names reserved for private or special
+use listed in [srvAllowedHostsSuffix](../initial-dns-seedlist-discovery.md#srvallowedhostssuffix) must be accepted
+despite that.
+
+Configure a MongoClient with `srvAllowedHostsSuffix=localhost` and assert that the SRV `mongodb+srv://cluster.localhost`
+resolving to `db.cluster.localhost` produces a seedlist containing `db.cluster.localhost`.
+
+### 13. Throw when `srvHostValidator` is used with a non-SRV URI
+
+`srvHostValidator` only has an effect on SRV resolution, so it MUST NOT be accepted alongside a non-SRV URI.
+
+Assert that configuring a MongoClient with any `srvHostValidator` and the non-SRV URI `mongodb://localhost:27017` throws
+an error.
 
 ## Test Setup
 

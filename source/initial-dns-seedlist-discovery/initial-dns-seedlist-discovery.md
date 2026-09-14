@@ -114,11 +114,12 @@ domain name validation can create vulnerabilities." should be clearly visible in
 #### srvHostValidator
 
 This option is an alternative to `srvAllowedHostsSuffix` that allows users to provide an optional synchronous callback
-If both `srvAllowedHostsSuffix` and `srvHostValidator` are present, an error MUST be raised. Drivers MAY raise this error at any point between MongoClient construction and DNS resolution.
-The signature of `srvHostValidator` MUST take in a string representing the SRV resolved hostname after applying the
-normalization described in [Querying DNS](#querying-dns), and return a bool representing whether the given SRV hostname
-is valid or not. If `srvHostValidator` raises an error during initial seedlist resolution, the driver MUST catch that
-error and wrap it prior to re-raising the error to the user. During
+for SRV host validation. If both `srvAllowedHostsSuffix` and `srvHostValidator` are present, an error MUST be raised.
+Drivers MAY raise this error at any point between MongoClient construction and DNS resolution. The signature of
+`srvHostValidator` MUST take in a string representing the SRV resolved hostname after applying the normalization
+described in [Querying DNS](#querying-dns), and return a bool representing whether the given SRV hostname is valid or
+not. If `srvHostValidator` raises an error during initial seedlist resolution, the driver MUST catch that error and wrap
+it prior to re-raising the error to the user. During
 [SRV polling](../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md), a driver MUST
 NOT raise an error; an error raised by the validator is instead treated as though the validator had returned `false`.
 Since this is a synchronous callback, drivers should advise users to not write a validator that blocks. This option MUST
@@ -150,7 +151,9 @@ requires a string value and defaults to "mongodb". This option MUST only be conf
 The driver MUST report an error if any of `srvServiceName`, `srvMaxHosts`, or `srvAllowedHostsSuffix` URI options are
 specified with a non-SRV URI (i.e. scheme other than `mongodb+srv`). The driver MUST allow specifying the
 `srvServiceName`, `srvMaxHosts`, and `srvAllowedHostsSuffix` URI options with an SRV URI (i.e. `mongodb+srv` scheme).
-While not a URI option, `srvHostValidator` also MUST only be allowed with the use of an SRV URI.
+While not a URI option, `srvHostValidator` also MUST only be allowed with the use of an SRV URI. As with the error
+raised when both `srvAllowedHostsSuffix` and `srvHostValidator` are present, drivers MAY raise this error at any point
+between MongoClient construction and DNS resolution.
 
 If `srvMaxHosts` is a positive integer, the driver MUST throw an error in the following cases:
 
