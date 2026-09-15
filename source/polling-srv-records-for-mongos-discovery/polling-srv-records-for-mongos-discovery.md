@@ -59,7 +59,7 @@ initial seedlist discovery. Periodic scan MUST follow these rules:
     that option changes which parent domain returned host names are verified against, not which records are queried.
 
 - A driver MUST verify every host name returned through SRV records. Drivers MUST normalize the returned host names as
-    described in Querying DNS (../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#querying-dns) before
+    described in [Querying DNS] (../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#querying-dns) before
     verifying them. Drivers MUST use the normalized host names, rather than the host names exactly as returned by DNS,
     to populate the topology. How that verification is performed depends on which options are configured:
 
