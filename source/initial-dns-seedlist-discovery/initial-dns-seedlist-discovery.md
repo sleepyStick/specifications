@@ -382,7 +382,7 @@ gives users more control over SRV host validation logic.
 
 ### Rationale for allowlist relating to `srvAllowedHostsSuffix`
 
-In [srvAllowedHostsSuffix](#srvAllowedHostsSuffix), the 4th step of validation for the parameter includes an allowlist.
+In [srvAllowedHostsSuffix](#srvallowedhostssuffix), the 4th step of validation for the parameter includes an allowlist.
 Without the allowlist, these suffixes would be rejected by the PSL algorithm -- specifically the `*` rule. The suffixes
 on this list are all either specially reserved or commonly recognized for private usage.
 
