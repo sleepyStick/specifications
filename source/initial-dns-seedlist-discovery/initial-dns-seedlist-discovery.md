@@ -205,6 +205,9 @@ that neither trailing dots, case, nor Unicode/Punycode encoding can affect the c
 from `srvAllowedHostsSuffix`, steps 1-3 of [srvAllowedHostsSuffix](#srvallowedhostssuffix) already apply them. The
 leading `.` that step 6 prepends makes the value a label-aligned suffix and is not part of this normalization.
 
+Drivers MAY differ in which IDNA processing standard they use for the A-label conversion as long as the same conversion
+is applied to both sides of the comparison: the returned hostnames and the `{domainname}` they are validated against.
+
 A driver MUST verify every host name returned through SRV records. How that verification is performed depends on which
 options are configured:
 
@@ -422,7 +425,7 @@ In the future we could consider using the priority and weight fields of the SRV 
 
 ## ChangeLog
 
-- 2026-09-09: Add `srvHostValidator` as a MongoClient option, and allow `srvAllowedHostsSuffix` to be a single label
+- 2026-09-16: Add `srvHostValidator` as a MongoClient option, and allow `srvAllowedHostsSuffix` to be a single label
     when that label is one of a fixed list of names reserved for private or special use.
 
 - 2026-09-03: Specify that host names returned through SRV records, and the `{domainname}` they are validated against,

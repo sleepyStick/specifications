@@ -192,7 +192,7 @@ No future work is expected.
 
 ## Changelog
 
-- 2026-09-09: Add `srvHostValidator` as a MongoClient option.
+- 2026-09-16: Add `srvHostValidator` as a MongoClient option.
 
 - 2026-09-03: Account for the `srvAllowedHostsSuffix` MongoClient option when verifying returned host names.
 
