@@ -63,8 +63,7 @@ Configure a validator that returns `true` for every host name, then run each of 
 ### 6. Reject a host the default verification would accept
 
 Configure a validator that returns `false` for every host name and assert that the SRV `mongodb+srv://blogs.mongodb.com`
-resolving to `cluster.mongodb.com` throws a runtime error, even though the returned address shares the SRV's domain
-name.
+resolving to `cluster.mongodb.com` throws an error, even though the returned address shares the SRV's domain name.
 
 ### 7. The validator receives the normalized host name
 
@@ -81,7 +80,7 @@ When the validator raises an error during initial seedlist resolution, the drive
 in a driver error rather than letting it propagate unchanged.
 
 Configure a validator that raises an error and assert that the SRV `mongodb+srv://blogs.mongodb.com` resolving to
-`cluster.mongodb.com` throws a runtime error which retains the error raised by the validator.
+`cluster.mongodb.com` throws an error which retains the error raised by the validator.
 
 ### 9. Throw when both `srvAllowedHostsSuffix` and `srvHostValidator` are configured
 
@@ -104,7 +103,7 @@ Drivers whose language cannot express a non-callable value for `srvHostValidator
 the program is compiled -- MUST skip this test.
 
 Assert that configuring a MongoClient with a `srvHostValidator` that is not callable, such as the string
-`"notacallable"`, throws a runtime error.
+`"notacallable"`, throws a error.
 
 ### 12. Accept a reserved single label as `srvAllowedHostsSuffix`
 
